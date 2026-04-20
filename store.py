@@ -1,3 +1,4 @@
+import os
 import uuid
 from typing import List, Dict, Set
 from schemas import Agent, AgentCreate, UsageLog
@@ -68,6 +69,46 @@ class DataStore:
         """
         import re
         from collections import Counter
+
+        # Optionally use LLM-based tag extraction when enabled by environment variables.
+        use_llm = os.getenv("USE_LLM_TAGS", "").lower() in ("1", "true", "yes")
+        openai_key = os.getenv("OPENAI_API_KEY")
+
+        if use_llm and openai_key:
+            try:
+                # Lazy import to avoid adding a hard runtime dependency when not used
+                import openai
+                openai.api_key = openai_key
+
+                prompt = (
+                    "Extract up to {n} concise keyword tags from the following text. "
+                    "Return a JSON array of strings only, without explanation.\n\nText:\n".format(n=top_n)
+                    + text
+                )
+
+                resp = openai.ChatCompletion.create(
+                    model=os.getenv("OPENAI_MODEL", "gpt-3.5-turbo"),
+                    messages=[{"role": "user", "content": prompt}],
+                    temperature=0.0,
+                    max_tokens=200,
+                )
+                content = resp.choices[0].message.content.strip()
+                # Try to parse JSON array from the model output safely
+                import json
+
+                # If model returns plain words separated by commas, normalize to JSON
+                try:
+                    tags = json.loads(content)
+                    if isinstance(tags, list):
+                        return [str(t).strip() for t in tags][:top_n]
+                except Exception:
+                    # fallback: split by non-word characters
+                    tokens = re.findall(r"\w+", content.lower())
+                    filtered = [t for t in tokens if len(t) > 1]
+                    return list(dict.fromkeys(filtered))[:top_n]
+            except Exception:
+                # If LLM call fails for any reason, fall back to local extractor
+                pass
 
         if not text:
             return []
