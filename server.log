@@ -1,0 +1,15 @@
+INFO:     Started server process [103641]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:60264 - "POST /agents HTTP/1.1" 201 Created
+INFO:     127.0.0.1:60276 - "GET /agents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60286 - "GET /search?q=pdf HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60290 - "POST /usage HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:60300 - "POST /usage HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:60308 - "GET /usage-summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60324 - "POST /usage HTTP/1.1" 400 Bad Request
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [103641]
