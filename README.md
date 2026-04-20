@@ -1,25 +1,41 @@
-# Agent Discovery + Usage Platform
 
-A simplified FastAPI system to register agents, search through them, and track their interactions with strictly enforced idempotency.
+# Amber-Flux
 
-## Setup and Running
+This repository contains the AI / Python intern screening assignment.
 
-1. **Install Dependencies**:
-   ```bash
-   pip install fastapi uvicorn
-   ```
+Setup (recommended):
 
-2. **Run the Server**:
-   ```bash
-   python main.py
-   ```
-   The server will start at `http://localhost:8000`. You can access the interactive Swagger UI at `http://localhost:8000/docs`.
+1. Create a virtual environment and activate it:
 
-## Technical Features
-- **Agent Registry**: Register agents with name, description, and endpoint.
-- **Search**: Case-insensitive substring matching on name and description.
-- **Idempotent Usage Logging**: Uses `request_id` to ensure that duplicate usage reports (e.g., from network retries) do not result in double counting.
-- **Keyword Extraction**: Automatically generates tags from the agent description by filtering common stop words.
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+2. Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+3. Run the server:
+
+```bash
+./venv/bin/python -m uvicorn main:app --host 127.0.0.1 --port 8000
+```
+
+Notes:
+- A `requirements.txt` was added to simplify reproducing the environment.
+- `log_usage` now matches targets case-insensitively and stores usage using the canonical agent name.
+- Keyword/tag extraction was improved to choose top terms from the description.
+
+Continuous Integration:
+
+A GitHub Actions workflow is included to run tests automatically on push and pull requests.
+
+Destructive cleanup note:
+
+If you want to remove the `venv/` directory from the repository history (it is currently removed from the index but still present in git history), let me know and I'll explain the recommended steps (they rewrite history and require care).
 
 ---
 
